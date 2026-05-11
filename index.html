@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KitchenDesk — Field Service Management for Kitchen Equipment Technicians</title>
+  <meta name="description" content="Manage customers, equipment, service tickets, and inventory from your phone. Built for kitchen equipment service technicians." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark: #1E2535;
+      --dark2: #252D40;
+      --dark3: #2E3850;
+      --orange: #F5A623;
+      --orange-dim: rgba(245,166,35,0.12);
+      --text: #FFFFFF;
+      --text-muted: #8892A4;
+      --text-dim: #B0BAC8;
+      --green: #4CAF80;
+      --red: #E87038;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(30,37,53,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--orange);
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 9px 20px;
+      border-radius: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta:hover { opacity: 0.88; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 100px 5% 80px;
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--orange-dim);
+      border: 1px solid rgba(245,166,35,0.3);
+      color: var(--orange);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 span { color: var(--orange); }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 580px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: var(--dark2);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: var(--dark3); }
+
+    .hero-note {
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* ── DASHBOARD PREVIEW ── */
+    .preview-wrap {
+      padding: 0 5% 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .preview-card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28CA41; }
+
+    .preview-title { margin-left: 8px; font-size: 0.82rem; color: var(--text-muted); }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--dark3);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; }
+    .stat-value.orange { color: var(--orange); }
+    .stat-value.green { color: var(--green); }
+    .stat-value.red { color: var(--red); }
+
+    .preview-rows { display: flex; flex-direction: column; gap: 8px; }
+
+    .preview-row {
+      background: var(--dark3);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .row-text { flex: 1; }
+    .row-title { font-size: 0.85rem; font-weight: 500; }
+    .row-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .row-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+    .badge-active { background: rgba(76,175,128,0.15); color: var(--green); }
+    .badge-service { background: rgba(245,166,35,0.15); color: var(--orange); }
+    .badge-down { background: rgba(232,112,56,0.15); color: var(--red); }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 5%; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--orange);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin-bottom: 52px;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(245,166,35,0.3);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--orange-dim);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step h3 { font-size: 1rem; font-weight: 600; }
+    .step p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+
+    .plan-card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 32px;
+      position: relative;
+    }
+
+    .plan-card.featured {
+      border-color: var(--orange);
+      background: linear-gradient(160deg, rgba(245,166,35,0.06) 0%, var(--dark2) 60%);
+    }
+
+    .plan-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--orange);
+      color: var(--dark);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-name { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .plan-price { font-size: 2.6rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 4px; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+    .plan-annual { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 24px; }
+    .plan-annual strong { color: var(--green); }
+
+    .plan-divider { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 20px; }
+
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: var(--orange);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .plan-cta {
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+      display: block;
+    }
+
+    .plan-cta:hover { opacity: 0.85; }
+    .plan-cta.primary { background: var(--orange); color: var(--dark); }
+    .plan-cta.outline { border: 1px solid rgba(255,255,255,0.15); color: var(--text); }
+
+    .pricing-note { text-align: center; font-size: 0.82rem; color: var(--text-muted); margin-top: 28px; }
+
+    /* ── TRUST ── */
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .trust-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 24px;
+      background: var(--dark2);
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .trust-item h4 { font-size: 0.95rem; font-weight: 600; }
+    .trust-item p { font-size: 0.83rem; color: var(--text-muted); }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: var(--dark2);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin-bottom: 12px; }
+    .cta-banner p { font-size: 1rem; color: var(--text-dim); margin-bottom: 32px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #161D2B;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 48px 5% 32px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand { max-width: 260px; }
+    .footer-brand p { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; }
+
+    .footer-links h4 { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links li a { font-size: 0.88rem; color: var(--text-muted); transition: color 0.2s; }
+    .footer-links li a:hover { color: var(--text); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .preview-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .preview-grid { grid-template-columns: 1fr; }
+      .hero { padding: 60px 5% 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <div class="logo-icon">KD</div>
+      KitchenDesk
+    </div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="#pricing" class="nav-cta">Start free trial</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">📱 Available on Android</div>
+    <h1>Field service management<br>built for <span>kitchen technicians</span></h1>
+    <p>Manage customers, equipment, service tickets, and inventory from your phone. Stop using spreadsheets and paper — run your operation professionally.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">
+        Start free trial
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#features" class="btn-secondary">See features</a>
+    </div>
+    <p class="hero-note">14-day free trial · No credit card required</p>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-wrap">
+    <div class="preview-card">
+      <div class="preview-topbar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="preview-title">KitchenDesk — Dashboard</span>
+      </div>
+      <div class="preview-grid">
+        <div class="stat-card">
+          <div class="stat-label">Down Active</div>
+          <div class="stat-value red">3</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In Service</div>
+          <div class="stat-value orange">7</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Overdue PM</div>
+          <div class="stat-value green">2</div>
+        </div>
+      </div>
+      <div class="preview-rows">
+        <div class="preview-row">
+          <div class="row-dot" style="background:#4CAF80"></div>
+          <div class="row-text">
+            <div class="row-title">Rational Combi Oven · S/N 4829</div>
+            <div class="row-sub">El Farolito · Last service 14 days ago</div>
+          </div>
+          <span class="row-badge badge-active">Active</span>
+        </div>
+        <div class="preview-row">
+          <div class="row-dot" style="background:#F5A623"></div>
+          <div class="row-text">
+            <div class="row-title">Hobart Commercial Mixer · S/N 1042</div>
+            <div class="row-sub">La Cocina · Ticket #0034 open</div>
+          </div>
+          <span class="row-badge badge-service">In Service</span>
+        </div>
+        <div class="preview-row">
+          <div class="row-dot" style="background:#E87038"></div>
+          <div class="row-text">
+            <div class="row-title">True Refrigeration Unit · S/N 7731</div>
+            <div class="row-sub">Restaurante Sol · Reported 2 days ago</div>
+          </div>
+          <span class="row-badge badge-down">Down</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features" style="background: #1A2030;">
+    <div class="section-inner">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything you need<br>to run your service business</h2>
+      <p class="section-sub">From the first customer call to the final signed report — KitchenDesk covers the entire service workflow.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🏢</div>
+          <h3>Customer & Site Management</h3>
+          <p>Organize all your customers and their locations. Link equipment and service history to each account. Search and filter in seconds.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3>Equipment Registry</h3>
+          <p>Track every piece of equipment with model, serial number, photos, and operational status. Know the history of every asset at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Service Tickets</h3>
+          <p>Create, assign, and resolve service tickets from your phone. Track time, parts used, and technician notes in one place.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h3>AI-Powered Reports</h3>
+          <p>Generate professional service reports with the help of AI. Export to PDF and share with customers directly from the app.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Inventory Control</h3>
+          <p>Track spare parts and stock levels. Inventory automatically decrements when parts are used on a service report.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Equipment Lookup</h3>
+          <p>Search equipment specs automatically using AI-powered lookup. Identify parts and manuals without leaving the app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-inner">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Up and running in minutes</h2>
+      <p class="section-sub">No training required. KitchenDesk is designed to feel natural from day one.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Create your account</h3>
+          <p>Sign up with your email, verify it, and set up your company profile. Takes less than 3 minutes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Add your customers</h3>
+          <p>Enter your customer list and their locations. Use Google Places for instant address autocomplete.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Register equipment</h3>
+          <p>Add the equipment at each site with photos, model, and serial number. Build your asset database.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>Run your operation</h3>
+          <p>Open tickets, generate reports, track inventory, and stay on top of every job — from your phone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="background: #1A2030;">
+    <div class="section-inner">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing</h2>
+      <p class="section-sub">Start with a 14-day free trial. No credit card required. Cancel anytime.</p>
+      <div class="pricing-grid">
+
+        <div class="plan-card">
+          <div class="plan-name">Solo</div>
+          <div class="plan-price">$39<span>/month</span></div>
+          <div class="plan-annual">or <strong>$379/year — save 19%</strong></div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>1 technician</li>
+            <li>Unlimited customers & sites</li>
+            <li>Unlimited equipment assets</li>
+            <li>Service tickets & reports</li>
+            <li>Inventory management</li>
+            <li>PDF export</li>
+            <li>AI-powered reports</li>
+          </ul>
+          <a href="#" class="plan-cta outline">Start free trial</a>
+        </div>
+
+        <div class="plan-card featured">
+          <div class="plan-badge">MOST POPULAR</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$89<span>/month</span></div>
+          <div class="plan-annual">or <strong>$859/year — save 20%</strong></div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>1 technician</li>
+            <li>Everything in Solo</li>
+            <li>Priority support</li>
+            <li>Advanced AI features</li>
+            <li>Equipment lookup</li>
+            <li>Detailed analytics</li>
+            <li>Early access to new features</li>
+          </ul>
+          <a href="#" class="plan-cta primary">Start free trial</a>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-name">Team</div>
+          <div class="plan-price">$189<span>/month</span></div>
+          <div class="plan-annual">or <strong>$1,829/year — save 19%</strong></div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>Up to 5 technicians</li>
+            <li>Everything in Pro</li>
+            <li>Shared asset database</li>
+            <li>Team ticket assignments</li>
+            <li>Centralized inventory</li>
+            <li>Admin dashboard</li>
+            <li>Dedicated support</li>
+          </ul>
+          <a href="#" class="plan-cta outline">Start free trial</a>
+        </div>
+
+      </div>
+      <p class="pricing-note">All plans include a 14-day free trial. Subscriptions managed via Google Play Store.</p>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section>
+    <div class="section-inner">
+      <div class="section-label">Security & Reliability</div>
+      <h2 class="section-title">Your data is safe with us</h2>
+      <p class="section-sub">Built on enterprise-grade infrastructure with security best practices from day one.</p>
+      <div class="trust-grid">
+        <div class="trust-item">
+          <span style="font-size:1.5rem">🔐</span>
+          <h4>Email verification required</h4>
+          <p>Every account is verified before access is granted. No exceptions.</p>
+        </div>
+        <div class="trust-item">
+          <span style="font-size:1.5rem">☁️</span>
+          <h4>Firebase cloud sync</h4>
+          <p>Your data syncs instantly and securely across devices via Google Firebase.</p>
+        </div>
+        <div class="trust-item">
+          <span style="font-size:1.5rem">🔒</span>
+          <h4>Encrypted in transit</h4>
+          <p>All data is transmitted over HTTPS. No plaintext connections ever.</p>
+        </div>
+        <div class="trust-item">
+          <span style="font-size:1.5rem">🛡️</span>
+          <h4>Your data, your rules</h4>
+          <p>You own your data. Request deletion at any time and we'll remove everything within 30 days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section style="padding-top: 0;">
+    <div class="cta-banner">
+      <h2>Ready to run a tighter operation?</h2>
+      <p>Join technicians who have ditched the paperwork and run their service business from their phone.</p>
+      <a href="#pricing" class="btn-primary" style="display:inline-flex;">
+        Start your free 14-day trial
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p style="margin-top:14px; font-size:0.82rem; color:var(--text-muted);">No credit card required · Cancel anytime</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">KD</div>
+            KitchenDesk
+          </div>
+          <p style="margin-top:12px;">Field service management built for kitchen equipment technicians.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How it works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="delete-account.html">Delete Account</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:tufharald@gmail.com">tufharald@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 KitchenDesk. All rights reserved.</span>
+        <span>Built for Android · Powered by Firebase</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
